@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DSA LEVELING // HUNTER'S SYSTEM</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="hunter-dsa-v8.css">
+</head>
+<body>
+
+<!-- ═══ EPIC ANIMATED BACKGROUND ════════════════════════ -->
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-inner">
+    <div class="boot-title">DSA LEVELING</div>
+    <div class="boot-lines">
+      <div class="bl">[ SYSTEM ] Hunter's Training Ground v8.0...</div>
+      <div class="bl">[ OK ] DSA combat modules loaded</div>
+      <div class="bl">[ OK ] Shadow repository connected</div>
+      <div class="bl">[ OK ] Quest engine ready</div>
+      <div class="bl">[ OK ] Confidence matrix calibrated</div>
+      <div class="bl">[ WARN ] Arise — your training awaits</div>
+      <div class="bl">[ SYSTEM ] Welcome back, Hunter.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARD -->
+<div class="modal" id="onboard">
+  <div class="ob-box">
+    <div class="ob-sys">// SYSTEM REGISTRATION</div>
+    <div class="ob-title">REGISTER<br>HUNTER</div>
+    <div class="ob-sub">// ENTER YOUR DETAILS TO BEGIN</div>
+    <div class="ob-fields">
+      <div class="ob-field">
+        <label class="ob-lbl">Hunter Name</label>
+        <input class="ob-inp" id="ob-name" placeholder="Your name" autocomplete="off" />
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">Age</label>
+        <input class="ob-inp" id="ob-age" type="number" placeholder="e.g. 21" min="10" max="99" />
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">Daily Problem Target</label>
+        <select class="ob-sel" id="ob-daily">
+          <option value="1">1 problem / day</option>
+          <option value="3" selected>3 problems / day</option>
+          <option value="5">5 problems / day</option>
+          <option value="10">10 problems / day</option>
+        </select>
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">Password (protects edit / delete)</label>
+        <input class="ob-inp" id="ob-pw" type="password" placeholder="Min 3 characters" autocomplete="new-password" />
+        <div class="ob-hint">// REQUIRED FOR EDITING OR DELETING LOGS</div>
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">Confirm Password</label>
+        <input class="ob-inp" id="ob-pw2" type="password" placeholder="Confirm password" autocomplete="new-password" />
+      </div>
+    </div>
+    <button class="btn ob-submit-btn" onclick="saveProfile()">ARISE — BEGIN TRAINING</button>
+  </div>
+</div>
+
+<!-- EDIT PROFILE -->
+<div class="modal" id="ep-modal">
+  <div class="ob-box ob-box-edit">
+    <div class="ob-sys">// EDIT PROFILE</div>
+    <div class="ob-title" style="font-size:clamp(14px,3.5vw,18px);margin-bottom:14px;">UPDATE HUNTER</div>
+    <div class="ob-fields">
+      <div class="ob-field">
+        <label class="ob-lbl">Hunter Name</label>
+        <input class="ob-inp" id="ep-name" autocomplete="off" />
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">Age</label>
+        <input class="ob-inp" id="ep-age" type="number" />
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">Daily Target</label>
+        <select class="ob-sel" id="ep-daily">
+          <option value="1">1 / day</option>
+          <option value="3">3 / day</option>
+          <option value="5">5 / day</option>
+          <option value="10">10 / day</option>
+        </select>
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">New Password <span style="color:var(--t4);font-size:10px">(blank = keep current)</span></label>
+        <input class="ob-inp" id="ep-pw" type="password" placeholder="New password" autocomplete="new-password" />
+      </div>
+      <div class="ob-field">
+        <label class="ob-lbl">Current Password <span style="color:var(--t4);font-size:10px">(required)</span></label>
+        <input class="ob-inp" id="ep-cur-pw" type="password" placeholder="Current password" autocomplete="current-password" />
+      </div>
+    </div>
+    <div class="ob-btn-row">
+      <button class="btn ob-submit-btn" onclick="saveEditProfile()">SAVE CHANGES</button>
+      <button class="btn-g ob-submit-btn" onclick="closeModal('ep-modal')">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal" id="pw-modal">
+  <div class="pw-box">
+    <div class="pw-title" id="pw-title">VERIFY</div>
+    <div class="pw-sub" id="pw-sub">// ENTER PASSWORD TO PROCEED</div>
+    <input class="pw-inp" id="pw-inp" type="password" placeholder="••••••••"
+      autocomplete="current-password" onkeydown="if(event.key==='Enter')confirmPw()" />
+    <div class="pw-err" id="pw-err"></div>
+    <div style="display:flex;gap:9px">
+      <button class="btn" style="flex:1;padding:10px" onclick="confirmPw()">CONFIRM</button>
+      <button class="btn-g" style="flex:1;padding:10px" onclick="cancelPw()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL UP -->
+<div id="lvl-overlay" onclick="closeLvl()">
+  <div class="lvl-ring"></div>
+  <div class="lvl-ring2"></div>
+  <div id="ptcls"></div>
+  <div class="lvl-sys">// RANK UP ACHIEVED</div>
+  <div class="lvl-txt">LEVEL UP</div>
+  <div class="lvl-rank" id="lvl-rank-txt">RANK INCREASED</div>
+  <div class="lvl-divider"></div>
+  <div class="lvl-close">[ TAP ANYWHERE TO CONTINUE ]</div>
+</div>
+<div id="ptcls"></div>
+<div id="notifs"></div>
+<!-- APP -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div class="sb-brand">
+        <div class="sb-title">DSA<br>LEVELING</div>
+      </div>
+      <button class="sb-close-btn" id="sb-close-btn" onclick="closeSb()">✕</button>
+    </div>
+
+    <div class="sb-hunter">
+      <div class="sb-name" id="sb-name">HUNTER</div>
+      <div class="sb-rank-row">
+        <div class="sb-rank" id="sb-rank">E</div>
+        <div class="sb-rank-lbl">RANK</div>
+      </div>
+      <div class="xp-wrap">
+        <div class="xp-nums"><span>XP</span><span id="xp-txt">0/500</span></div>
+        <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-item active" onclick="showView('dashboard',this)"><span class="nav-icon">⌂</span><span>Dashboard</span></div>
+      <div class="nav-item" onclick="showView('sheet',this)"><span class="nav-icon">◫</span><span>Problems</span></div>
+      <div class="nav-item" onclick="showView('problems',this)"><span class="nav-icon">⚔</span><span>Problem Log</span></div>
+      <div class="nav-item" onclick="showView('skills',this)"><span class="nav-icon">✦</span><span>Skill Tree</span></div>
+      <div class="nav-item" onclick="showView('review',this)"><span class="nav-icon">↺</span><span>Review</span></div>
+      <div class="nav-item" onclick="showView('timer',this)"><span class="nav-icon">⏱</span><span>Focus Mode</span></div>
+      <div class="nav-item" onclick="showView('about',this)"><span class="nav-icon">ℹ</span><span>About & How</span></div>
+    </nav>
+
+    <div class="sb-foot">
+      <div class="nav-item footer-nav-item" onclick="showView('data',this)"><span class="nav-icon">⬇</span><span>Backup</span></div>
+      <button class="sb-btn" id="theme-btn" onclick="toggleTheme()">☀</button>
+      <div class="user-avatar" id="sb-avatar" onclick="openModal('ep-modal');fillEpModal()" title="Edit Profile">?</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+
+    <!-- TOPBAR (mobile) -->
+    <div class="topbar" id="topbar">
+      <button class="tb-menu" onclick="openSb()">☰</button>
+      <div class="tb-brand">DSA LEVELING</div>
+      <button class="tb-ctrl" id="tb-theme-btn" onclick="toggleTheme()">☀</button>
+      <div class="user-avatar" id="tb-avatar"
+        style="width:30px;height:30px;font-size:13px"
+        onclick="openModal('ep-modal');fillEpModal()">?</div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-dashboard">
+        <div class="sec-hdr">
+          <div><div class="sec-title">COMMAND CENTER</div><div class="sec-sub">// HUNTER OVERVIEW</div></div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--t3)" id="today-date"></div>
+        </div>
+        <div class="cards-grid">
+          <div class="stat-card"><div class="sc-lbl">Solved</div><div class="sc-val" id="dc-solved">0</div><div class="sc-sub">problems</div></div>
+          <div class="stat-card"><div class="sc-lbl">Streak</div><div class="sc-val" id="dc-streak">0</div><div class="sc-sub">days</div></div>
+          <div class="stat-card"><div class="sc-lbl">Rank</div><div class="sc-val" id="dc-rank">E</div><div class="sc-sub">current</div></div>
+          <div class="stat-card"><div class="sc-lbl">Total XP</div><div class="sc-val" id="dc-xp">0</div><div class="sc-sub">earned</div></div>
+        </div>
+        <div class="quest-panel">
+          <div class="q-panel-title">DAILY QUEST — ARISE</div>
+          <div class="quest-list" id="quest-list"></div>
+        </div>
+        <div class="streak-bar">
+          <div class="streak-n" id="streak-num">0</div>
+          <div class="streak-info">
+            <div class="streak-lbl">// COMBAT STREAK</div>
+            <div class="streak-desc">consecutive active days</div>
+          </div>
+          <button class="btn-g btn-sm" onclick="markActive()">MARK TODAY</button>
+        </div>
+        <div class="hm-panel">
+          <div class="panel-lbl">// 365-DAY ACTIVITY MAP</div>
+          <div class="hm-grid" id="heatmap"></div>
+        </div>
+      </div>
+
+      <!-- PROBLEMS SHEET -->
+      <div class="view" id="view-sheet">
+        <div class="sec-hdr">
+          <div><div class="sec-title">PROBLEMS</div><div class="sec-sub">// MODULE UNDER RECONSTRUCTION</div></div>
+        </div>
+        <div class="hm-panel" style="padding:30px 24px">
+          <div class="panel-lbl">// COMING SOON</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:800;letter-spacing:2px;color:var(--t1);margin:10px 0 8px">Problems Arena Is Being Forged</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--t3);line-height:1.9;max-width:680px">
+            This section is under rebuild right now.<br>
+            A cleaner problem roadmap, challenge tracks, and better progress views will arrive in a future update.<br>
+            Until then, use <span style="color:var(--t1)">Problem Log</span> to continue your training.
+          </div>
+        </div>
+      </div>
+
+      <!-- PROBLEM LOG -->
+      <div class="view" id="view-problems">
+        <div class="sec-hdr">
+          <div><div class="sec-title">PROBLEM LOG</div><div class="sec-sub">// BATTLE RECORDS</div></div>
+          <button class="btn" onclick="toggleForm()">+ LOG BATTLE</button>
+        </div>
+
+        <div class="add-form" id="add-form">
+          <div class="form-tag">// NEW BATTLE RECORD</div>
+          <div class="form-grid">
+            <div class="form-field"><label class="form-lbl">Problem Name</label><input class="form-inp" id="f-name" placeholder="e.g. Two Sum" /></div>
+            <div class="form-field">
+              <label class="form-lbl">Topic</label>
+              <div class="topic-wrap">
+                <input class="form-inp" id="f-topic" placeholder="e.g. Arrays, DP" autocomplete="off"
+                  oninput="onTopicInput('f-topic','f-topic-dd')"
+                  onkeydown="onTopicKey(event,'f-topic','f-topic-dd')"
+                  onblur="setTimeout(()=>closeTopicDd('f-topic-dd'),150)" />
+                <div class="topic-dropdown" id="f-topic-dd"></div>
+              </div>
+            </div>
+            <div class="form-field"><label class="form-lbl">Difficulty</label>
+              <select class="form-sel" id="f-diff"><option>Easy</option><option>Medium</option><option>Hard</option></select>
+            </div>
+            <div class="form-field"><label class="form-lbl">Status</label>
+              <select class="form-sel" id="f-status"><option>Solved</option><option>Revisit</option><option>Failed</option></select>
+            </div>
+            <div class="form-field"><label class="form-lbl">Time (mins)</label><input class="form-inp" id="f-time" type="number" placeholder="25" /></div>
+            <div class="form-field"><label class="form-lbl">Platform</label>
+              <select class="form-sel" id="f-platform"><option>LeetCode</option><option>Codeforces</option><option>HackerRank</option><option>GFG</option><option>Other</option></select>
+            </div>
+            <div class="form-field"><label class="form-lbl">Code Language</label>
+              <select class="form-sel" id="f-lang"><option>C++</option><option>Java</option><option>Python</option><option>JavaScript</option><option>Go</option><option>Other</option></select>
+            </div>
+            <div class="form-field"><label class="form-lbl">Confidence (affects review)</label>
+              <div class="conf-seg" id="f-conf-stars">
+                <button type="button" class="conf-pill" data-v="1" onclick="setConf(1)">1 <span class="cpill-lbl">LOW</span></button>
+                <button type="button" class="conf-pill" data-v="2" onclick="setConf(2)">2</button>
+                <button type="button" class="conf-pill active" data-v="3" onclick="setConf(3)">3 <span class="cpill-lbl">MID</span></button>
+                <button type="button" class="conf-pill" data-v="4" onclick="setConf(4)">4</button>
+                <button type="button" class="conf-pill" data-v="5" onclick="setConf(5)">5 <span class="cpill-lbl">MAX</span></button>
+              </div>
+            </div>
+            <div class="form-field form-full"><label class="form-lbl">Problem Link</label><input class="form-inp" id="f-link" placeholder="https://leetcode.com/problems/..." /></div>
+            <div class="form-field form-full"><label class="form-lbl">Approach / Intuition</label><textarea class="form-ta" id="f-approach" placeholder="Describe your approach..."></textarea></div>
+            <div class="form-field form-full"><label class="form-lbl">Code Solution</label><textarea class="form-ta code-ta" id="f-code" placeholder="// Paste your solution..."></textarea></div>
+            <div class="form-field form-full"><label class="form-lbl">Notes / Mistakes</label><textarea class="form-ta" id="f-notes" placeholder="What went wrong?" style="min-height:60px"></textarea></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn" onclick="addProblem()">RECORD BATTLE</button>
+            <button class="btn-g" onclick="toggleForm()">CANCEL</button>
+          </div>
+        </div>
+
+        <div class="log-head">
+          <input class="search-inp" id="search-inp" placeholder="Search problems, topics..." oninput="renderProblems()" />
+        </div>
+        <div class="filter-row">
+          <div class="ftag active" data-f="All" onclick="setFilter(this)">ALL</div>
+          <div class="ftag" data-f="Easy" onclick="setFilter(this)">EASY</div>
+          <div class="ftag" data-f="Medium" onclick="setFilter(this)">MEDIUM</div>
+          <div class="ftag" data-f="Hard" onclick="setFilter(this)">HARD</div>
+          <div class="ftag" data-f="Solved" onclick="setFilter(this)">SOLVED</div>
+          <div class="ftag" data-f="Revisit" onclick="setFilter(this)">REVISIT</div>
+          <div class="ftag" data-f="Failed" onclick="setFilter(this)">FAILED</div>
+        </div>
+        <div class="prob-list" id="prob-list"></div>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="view" id="view-skills">
+        <div class="sec-hdr"><div><div class="sec-title">SKILL TREE</div><div class="sec-sub">// DSA MASTERY</div></div></div>
+        <div class="skills-grid" id="skills-grid"></div>
+      </div>
+
+      <!-- REVIEW -->
+      <div class="view" id="view-review">
+        <div class="sec-hdr"><div><div class="sec-title">SPACED REVIEW</div><div class="sec-sub">// CONFIDENCE-BASED</div></div></div>
+        <div id="review-wrap"></div>
+      </div>
+
+      <!-- TIMER -->
+      <div class="view" id="view-timer">
+        <div class="sec-hdr"><div><div class="sec-title">FOCUS MODE</div><div class="sec-sub">// ENTER THE DUNGEON</div></div></div>
+        <div class="timer-panel" id="timer-panel">
+          <div class="panel-lbl">// COMBAT TIMER</div>
+          <div class="timer-disp" id="timer-disp">25:00</div>
+          <div class="timer-status" id="timer-status">READY</div>
+          <div class="timer-btns">
+            <button class="btn" id="btn-start" onclick="startTimer()">START</button>
+            <button class="btn-g btn-disabled" id="btn-pause" onclick="pauseTimer()">PAUSE</button>
+            <button class="btn-g btn-disabled" id="btn-reset" onclick="resetTimer()">RESET</button>
+          </div>
+          <div class="timer-presets">
+            <button class="btn-g btn-sm" onclick="setTimer(25,'Scout Sprint')">Scout Sprint (25m)</button>
+            <button class="btn-g btn-sm" onclick="setTimer(45,'Hunter Grind')">Hunter Grind (45m)</button>
+            <button class="btn-g btn-sm" onclick="setTimer(60,'Dungeon Push')">Dungeon Push (60m)</button>
+            <button class="btn-g btn-sm" onclick="setTimer(90,'Boss Raid')">Boss Raid (90m)</button>
+          </div>
+        </div>
+        <div class="hm-panel">
+          <div class="panel-lbl">// TODAY'S SESSIONS</div>
+          <div id="session-log" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--t3);line-height:2.2">No sessions today.</div>
+        </div>
+      </div>
+
+      <!-- EXPORT / IMPORT -->
+      <div class="view" id="view-data">
+        <div class="sec-hdr"><div><div class="sec-title">EXPORT / IMPORT</div><div class="sec-sub">// SYNC ACROSS DEVICES</div></div></div>
+        <div class="exim-grid">
+          <div class="exim-panel exim-panel-primary">
+            <div class="exim-title">EXPORT BACKUP</div>
+            <div class="exim-copy">
+              Download your full progress as a JSON backup file.
+            </div>
+            <div class="exim-note">Includes problems, XP, streak, profile, and training history.</div>
+            <div class="exim-actions">
+              <button class="btn" onclick="exportData()">⬇ EXPORT DATA</button>
+            </div>
+          </div>
+
+          <div class="exim-panel">
+            <div class="exim-title">IMPORT BACKUP</div>
+            <div class="exim-copy">
+              Restore data from a previously exported JSON file.
+            </div>
+            <div class="exim-note exim-warn">Warning: this will overwrite your current data.</div>
+            <div class="exim-actions">
+              <button class="btn-g" onclick="document.getElementById('import-file').click()">⬆ IMPORT FILE</button>
+              <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)" />
+            </div>
+            <div class="exim-drop" id="exim-drop">
+              <div class="exim-drop-title">DRAG & DROP BACKUP</div>
+              <div class="exim-drop-sub">Drop your `.json` file here to import it instantly.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT & HOW -->
+      <div class="view" id="view-about">
+        <div class="sec-hdr"><div><div class="sec-title">ABOUT & HOW</div><div class="sec-sub">// SYSTEM MANUAL</div></div></div>
+
+        <div class="about-block">
+          <div class="about-block-title">WHAT IS THIS?</div>
+          <div class="about-block-txt">DSA Leveling is a Solo Leveling–inspired tracker for your DSA practice. Log every problem you attempt, earn XP, rank up from E to Shadow Monarch, and stay sharp with confidence-based spaced repetition review.</div>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-title">HOW TO EARN XP</div>
+          <table class="rank-table">
+            <tr><td>Solve Easy</td><td>+20 XP</td></tr>
+            <tr><td>Solve Medium</td><td>+50 XP</td></tr>
+            <tr><td>Solve Hard</td><td>+100 XP</td></tr>
+            <tr><td>Bonus Easy (beyond daily target)</td><td>+10 XP</td></tr>
+            <tr><td>Bonus Medium (beyond daily target)</td><td>+25 XP</td></tr>
+            <tr><td>Bonus Hard (beyond daily target)</td><td>+50 XP</td></tr>
+            <tr><td>Focus — Scout Sprint (25m)</td><td>+50 XP</td></tr>
+            <tr><td>Focus — Hunter Grind (45m)</td><td>+65 XP</td></tr>
+            <tr><td>Focus — Dungeon Push (60m)</td><td>+80 XP</td></tr>
+            <tr><td>Focus — Boss Raid (90m)</td><td>+120 XP</td></tr>
+            <tr><td>Daily Quest: Solve (×daily target)</td><td>+20×n XP</td></tr>
+            <tr><td>Daily Quest: Log (×daily target)</td><td>+10×n XP</td></tr>
+            <tr><td>Daily Quest: Focus session</td><td>+50 XP</td></tr>
+            <tr><td>Review: Easy rating</td><td>+5 XP</td></tr>
+          </table>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-title">RANK LADDER</div>
+          <table class="rank-table">
+            <tr><td>E — Beginner</td><td>0 XP</td></tr>
+            <tr><td>D — Apprentice</td><td>500 XP</td></tr>
+            <tr><td>C — Fighter</td><td>1,000 XP</td></tr>
+            <tr><td>B — Hunter</td><td>1,500 XP</td></tr>
+            <tr><td>A — Elite</td><td>2,000 XP</td></tr>
+            <tr><td>S — Monarch</td><td>2,500 XP</td></tr>
+            <tr><td>SS — Transcendent</td><td>3,000 XP</td></tr>
+            <tr><td>SSS — Legendary</td><td>3,500 XP</td></tr>
+            <tr><td>NATIONAL — Sovereign</td><td>4,000 XP</td></tr>
+            <tr><td>SHADOW MONARCH</td><td>4,500 XP</td></tr>
+          </table>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-title">CONFIDENCE & SPACED REVIEW</div>
+          <div class="about-block-txt">
+            Rate your confidence 1–5 when logging a problem. This controls how soon it comes back for review — lower confidence means more frequent repetition.<br><br>
+            1 → review in 1 day &nbsp;·&nbsp; 2 → 2 days &nbsp;·&nbsp; 3 → 5 days &nbsp;·&nbsp; 4 → 10 days &nbsp;·&nbsp; 5 → 21 days<br><br>
+            When reviewing, rating yourself adjusts your confidence ±1 automatically and reschedules the next review date.
+          </div>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-title">FEATURE GUIDE</div>
+          <table class="rank-table">
+            <tr><td>Dashboard</td><td>Overview of rank, streak, solved count, total XP, daily quests, and 365-day activity heatmap.</td></tr>
+            <tr><td>Problem Log</td><td>Log every problem with name, topic, difficulty, status, time, platform, language, confidence, approach, code, and notes. Password-protected edits and deletes.</td></tr>
+            <tr><td>Skill Tree</td><td>Visualizes mastery per topic based on how many problems you've solved in it. Statuses: Locked → Novice → Adept → Master.</td></tr>
+            <tr><td>Spaced Review</td><td>Shows problems due for review today, sorted by lowest confidence first. Rate each attempt to reschedule.</td></tr>
+            <tr><td>Focus Mode</td><td>Four named timer presets: Scout Sprint (25m), Hunter Grind (45m), Dungeon Push (60m), Boss Raid (90m). Each awards XP on completion.</td></tr>
+            <tr><td>Daily Quests</td><td>Three quests per day: solve N problems, log N problems, complete 1 focus session — where N matches your registered daily target. Claim XP when done.</td></tr>
+            <tr><td>Backup</td><td>Export your progress as a JSON file. Import it on any device to restore your data. Sheet problems are excluded from backup (they regenerate automatically).</td></tr>
+          </table>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-title">TIPS</div>
+          <div class="about-block-txt">
+            · Log even failed attempts — they count toward quests and track your journey<br>
+            · Use topic autocomplete for consistent skill tree tracking<br>
+            · Bonus XP kicks in only after you've hit your daily target for the day<br>
+            · Lower confidence problems appear first in review — tackle your weak spots<br>
+            · Export your backup regularly; it only saves your problem logs and progress, not sheet data<br>
+            · Your password protects all edit and delete operations — don't forget it
+          </div>
+        </div>
+
+        <div class="about-block">
+          <div class="about-block-title">VERSION</div>
+          <div class="about-block-txt">
+            DSA Leveling v8.0 — Built by Prerit Kumar Singh<br>
+            Confidence-pill selector · Cumulative XP display · Fixed timer XP · Clean level-up screen · Backup excludes sheet data
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+
+    <footer>
+      <div class="footer-left">CREATED BY <b>PRERIT KUMAR SINGH</b> &nbsp;·&nbsp; DSA LEVELING v8.0</div>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/preritkrsingh?igsh=MjY5Mm12OXQ3eTEy" target="_blank" class="soc-link" title="Instagram">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://facebook.com" target="_blank" class="soc-link" title="Facebook">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/prerit-kumar-singh-5a1843332?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" class="soc-link" title="LinkedIn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://x.com/preritkrsingh" target="_blank" class="soc-link" title="X">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      </div>
+    </footer>
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script src="hunter-dsa-v8.js"></script>
+</body>
+</html>
